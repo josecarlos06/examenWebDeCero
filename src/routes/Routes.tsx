@@ -1,26 +1,30 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
-import LayoutPublic from '../layout/public/Layout-Public'
-import Login from '../pages/login/Login'
-import Profile from '../pages/profile/Profile'
-import LayoutPrivate from '../layout/private/Layout-Private'
+import { Suspense, lazy } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
+import Loader from '../components/shared/Loader';
 
-// Creacion de las rutas
-const Routing= () => {
-   return (
-      <BrowserRouter>
-         <Routes>
-            <Route element={<LayoutPublic />}>
-               <Route index element={<Login/>} />
-            </Route>
+const LayoutPublic = lazy(() => import('../layout/public/Layout-Public'));
+const LayoutPrivate = lazy(() => import('../layout/private/Layout-Private'));
+const Login = lazy(() => import('../pages/login/Login'));
+const Profile = lazy(() => import('../pages/profile/Profile'));
 
-            <Route path='/profile' element={<LayoutPrivate />}>
-               <Route index element={<Profile/>} />
-            </Route>
+const Routing = () => {
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<div className='bg-primary h-screen flex justify-center items-center'><Loader/></div>}>
+        <Routes>
+          <Route element={<LayoutPublic />}>
+            <Route index element={<Login />} />
+          </Route>
 
-            <Route path='*' element={<Navigate to="/" />} />
-         </Routes>
-      </BrowserRouter>
-   )
-}
+          <Route path="/profile" element={<LayoutPrivate />}>
+            <Route index element={<Profile />} />
+          </Route>
 
-export default Routing
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  );
+};
+
+export default Routing;
